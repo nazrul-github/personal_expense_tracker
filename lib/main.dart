@@ -28,21 +28,23 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Flutter App"),
       ),
-      body: Column(
-        //column always has the width of it's bordest child, and it set's the width for all of it's other child accordingly
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Card(
-            color: Colors.blue,
-            child: Container(
-              child: Text("CHART!"),
-              width: double.infinity,
+      body: SingleChildScrollView(
+        child: Column(
+          //column always has the width of it's bordest child, and it set's the width for all of it's other child accordingly
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Card(
+              color: Colors.blue,
+              child: Container(
+                child: Text("CHART!"),
+                width: double.infinity,
+              ),
+              elevation: 5.0,
             ),
-            elevation: 5.0,
-          ),
-          UserTransactions(),
-        ],
+            UserTransactions(),
+          ],
+        ),
       ),
     );
   }
