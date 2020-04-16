@@ -1,22 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class NewTransaction extends StatelessWidget {
-  final _titleController = TextEditingController();
-  final _amountCountroller = TextEditingController();
+class NewTransaction extends StatefulWidget {
   final Function _addTransaction;
 
   NewTransaction(this._addTransaction);
 
+  @override
+  _NewTransactionState createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final _titleController = TextEditingController();
+
+  final _amountCountroller = TextEditingController();
+  DateTime _pickedDate;
+
   void _submitData() {
-    final enteredTitle = _titleController.text;
-    final enteredAmount = double.parse(_amountCountroller.text);
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    if (_amountCountroller.text.isEmpty) {
       return;
     }
-    this._addTransaction(
-      enteredTitle,
-      enteredAmount,
-    );
+    final enteredTitle = _titleController.text;
+    final enteredAmount = double.parse(_amountCountroller.text);
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _pickedDate == null) {
+      return;
+    }
+    this.widget._addTransaction(
+          enteredTitle,
+          enteredAmount,
+          _pickedDate,
+        );
+    Navigator.of(context).pop();
+  }
+
+  void _showDateModal() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime(2019),
+            lastDate: DateTime.now())
+        .then((selected) {
+      if (selected == null) {
+        return;
+      }
+      setState(() {
+        _pickedDate = selected;
+      });
+    });
   }
 
   @override
@@ -45,14 +75,41 @@ class NewTransaction extends StatelessWidget {
               onSubmitted: (_) => this._submitData(),
               // onChanged: (val) => amountInput = val,
             ),
-            FlatButton(
-              onPressed: () => this._submitData(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                _pickedDate == null
+                    ? Text("No Date Picked!")
+                    : Text(
+                        "Picked date: ${DateFormat('E dd/MMM/yyyy').format(_pickedDate)}",
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                FlatButton(
+                  onPressed: _showDateModal,
+                  child: Text(
+                    "Choose Date",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  textColor: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+            RaisedButton(
+              onPressed: () => _submitData(),
               child: Text(
                 'Add Transaction',
                 style: TextStyle(
-                  color: Colors.purple,
+                  color: Theme.of(context).textTheme.button.color,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+              color: Theme.of(context).primaryColor,
             ),
           ],
         ),
